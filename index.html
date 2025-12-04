@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="icon.png" type="image/png">
+    <title>Minecraft Карти</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            -webkit-font-smoothing: none;
+            -moz-osx-font-smoothing: grayscale;
+            font-smooth: never;
+        }
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background-color: #3c3836;
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Партікли снігу */
+        #particles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: white;
+            box-shadow: 0 0 2px 1px rgba(255, 255, 255, 0.8);
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) translateX(var(--wind)) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Світлові промені */
+        #lightBeams {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .light-beam {
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(94, 154, 58, 0.2), transparent);
+            filter: blur(2px);
+            animation: beamPulse linear infinite;
+        }
+
+        @keyframes beamPulse {
+            0%, 100% { opacity: 0.3; transform: scaleY(1); }
+            50% { opacity: 0.6; transform: scaleY(1.2); }
+        }
+
+        /* Фоновий патерн */
+        .bg-pattern {
+            position: fixed;
+            inset: 0;
+            opacity: 0.05;
+            pointer-events: none;
+            background-image: url('https://images.unsplash.com/photo-1658834291352-d2d8e554c0dd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400');
+            background-size: 200px;
+            z-index: 0;
+        }
+
+        /* Контейнер */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Хедер */
+        header {
+            background: #8B7355;
+            border-bottom: 8px solid #2b2522;
+            box-shadow: 0 8px 0 0 rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .header-gradient {
+            position: absolute;
+            inset: 0;
+            opacity: 0.2;
+            background: linear-gradient(90deg, transparent 0%, #5e9a3a 50%, transparent 100%);
+            animation: headerGradient 3s linear infinite;
+        }
+
+        @keyframes headerGradient {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem 0;
+            position: relative;
+        }
+
+        .header-icon {
+            background: #5e9a3a;
+            padding: 1rem;
+            border: 4px solid #2b2522;
+            box-shadow: 4px 4px 0 0 rgba(0, 0, 0, 0.4);
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes iconPulse {
+            0%, 100% { box-shadow: 4px 4px 0 0 rgba(0, 0, 0, 0.4); }
+            50% { box-shadow: 6px 6px 0 0 rgba(94, 154, 58, 0.6); }
+        }
+
+        .header-icon:hover {
+            animation: wiggle 0.5s ease-in-out, iconPulse 2s ease-in-out infinite;
+            transform: scale(1.1);
+        }
+
+        .header-icon svg {
+            animation: iconFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-3px) rotate(5deg); }
+            75% { transform: translateY(-3px) rotate(-5deg); }
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+            75% { transform: rotate(-10deg); }
+        }
+
+        h1 {
+            font-size: 16px;
+            text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
+            margin-bottom: 0.25rem;
+        }
+
+        h1 span {
+            display: inline-block;
+            animation: letterPop 0.5s ease-out;
+            animation-fill-mode: both;
+            transition: all 0.2s;
+        }
+
+        h1 span:hover {
+            transform: translateY(-5px);
+            color: #5e9a3a;
+        }
+
+        @keyframes letterPop {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .subtitle {
+            font-size: 10px;
+            color: #d4c4b0;
+            text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        /* Інфо панель */
+        .info-panel {
+            background: #665544;
+            border: 4px solid #2b2522;
+            padding: 1.25rem;
+            margin: 2rem 0;
+            box-shadow: 6px 6px 0 0 rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: slideInLeft 0.5s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .info-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .info-text {
+            font-size: 10px;
+            color: #d4c4b0;
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Сітка карт */
+        .maps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Картка карти */
+        .map-card {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s;
+            animation: cardAppear 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        @keyframes cardAppear {
+            from { opacity: 0; transform: translateY(50px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .map-card:hover {
+            transform: translateY(-12px);
+            z-index: 10;
+        }
+
+        .map-card-shadow {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            transform: translate(8px, 8px);
+            z-index: -1;
+            transition: all 0.3s;
+        }
+
+        .map-card:hover .map-card-shadow {
+            transform: translate(12px, 12px) scale(1.05);
+            opacity: 0.6;
+        }
+
+        .map-card-content {
+            background: #8B7355;
+            border: 4px solid #2b2522;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-card-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .map-card-content::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            top: 0;
+            width: 1px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .card-gradient {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            background: linear-gradient(45deg, #5e9a3a 0%, transparent 50%, #5e9a3a 100%);
+            transition: opacity 0.3s;
+            pointer-events: none;
+            background-size: 200% 200%;
+            animation: gradientRotate 3s linear infinite;
+        }
+
+        .map-card:hover .card-gradient {
+            opacity: 0.1;
+        }
+
+        @keyframes gradientRotate {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .map-image {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            border-bottom: 4px solid #2b2522;
+            transition: transform 0.3s;
+        }
+
+        .map-card:hover .map-image {
+            transform: scale(1.1);
+        }
+
+        .map-image-wrapper {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .map-category {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: #2b2522;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            font-size: 8px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            animation: badgeSlide 0.5s ease-out;
+        }
+
+        .map-category-icon {
+            animation: iconSpin 2s linear infinite;
+        }
+
+        @keyframes iconSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes badgeSlide {
+            from { transform: translateX(100px) rotate(-180deg); opacity: 0; }
+            to { transform: translateX(0) rotate(0deg); opacity: 1; }
+        }
+
+        .map-card:hover .map-category {
+            animation: badgeHover 0.5s ease-in-out;
+        }
+
+        @keyframes badgeHover {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+        }
+
+        .photo-count {
+            position: absolute;
+            bottom: 0.5rem;
+            right: 0.5rem;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            font-size: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Floating particles */
+        .floating-particles {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .map-card:hover .floating-particles {
+            opacity: 1;
+        }
+
+        .float-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #5e9a3a;
+            box-shadow: 0 0 4px 2px rgba(94, 154, 58, 0.6);
+            animation: floatUp 2s ease-in-out infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) translateX(0) scale(0); opacity: 0; }
+            50% { opacity: 1; transform: translateY(-15px) scale(1.5); }
+            100% { transform: translateY(-30px) translateX(var(--drift)) scale(0); opacity: 0; }
+        }
+
+        .map-info {
+            padding: 1rem;
+        }
+
+        .map-title {
+            font-size: 12px;
+            color: white;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+            margin-bottom: 0.75rem;
+            transition: color 0.3s;
+        }
+
+        .map-card:hover .map-title {
+            color: #5e9a3a;
+        }
+
+        .map-description {
+            font-size: 9px;
+            color: #d4c4b0;
+            line-height: 1.6;
+            margin-bottom: 0.75rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .map-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 8px;
+            color: #d4c4b0;
+            padding-top: 0.75rem;
+            border-top: 2px solid #2b2522;
+            margin-bottom: 0.75rem;
+        }
+
+        .map-button {
+            width: 100%;
+            background: #5e9a3a;
+            color: white;
+            padding: 0.75rem;
+            border: none;
+            border-top: 2px solid rgba(255, 255, 255, 0.3);
+            border-left: 2px solid rgba(255, 255, 255, 0.3);
+            border-right: 2px solid rgba(0, 0, 0, 0.4);
+            border-bottom: 4px solid rgba(0, 0, 0, 0.6);
+            box-shadow: 0 3px 0 0 rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            font-size: 10px;
+            font-family: 'Press Start 2P', cursive;
+            text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+            transition: all 0.1s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-button::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: translateX(-200%);
+            animation: buttonShine 2s ease-in-out infinite;
+            animation-delay: 3s;
+        }
+
+        @keyframes buttonShine {
+            0% { transform: translateX(-200%); }
+            50% { transform: translateX(200%); }
+            100% { transform: translateX(200%); }
+        }
+
+        .map-button:hover {
+            background: #6eb044;
+            transform: scale(1.02);
+        }
+
+        .map-button:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.3);
+        }
+
+        /* Confetti */
+        #confetti {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            animation: confettiFall 2s ease-in forwards;
+        }
+
+        @keyframes confettiFall {
+            to {
+                transform: translateY(100vh) translateX(var(--drift)) rotate(var(--rotation));
+                opacity: 0;
+            }
+        }
+
+        /* Модальне вікно */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 50;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-wrapper {
+            position: relative;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            animation: modalSlideUp 0.4s ease-out;
+        }
+
+        @keyframes modalSlideUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(50px) scale(0.8); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
+        }
+
+        .modal-shadow {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            transform: translate(12px, 12px);
+        }
+
+        .modal-content {
+            position: relative;
+            background: #8B7355;
+            border: 4px solid #2b2522;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-header {
+            background: #8B7355;
+            border-bottom: 4px solid #2b2522;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            gap: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .modal-close {
+            background: #c0392b;
+            color: white;
+            border: none;
+            border-top: 2px solid rgba(255, 255, 255, 0.3);
+            border-left: 2px solid rgba(255, 255, 255, 0.3);
+            border-right: 2px solid rgba(0, 0, 0, 0.4);
+            border-bottom: 4px solid rgba(0, 0, 0, 0.6);
+            box-shadow: 0 3px 0 0 rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            padding: 0.5rem;
+            font-size: 16px;
+            transition: all 0.2s;
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            animation: closePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes closePulse {
+            0%, 100% { box-shadow: 0 3px 0 0 rgba(0, 0, 0, 0.3); }
+            50% { box-shadow: 0 3px 10px 0 rgba(231, 76, 60, 0.4); }
+        }
+
+        .modal-close:hover {
+            background: #e74c3c;
+            transform: rotate(90deg) scale(1.1);
+            box-shadow: 0 0 20px rgba(231, 76, 60, 0.8);
+        }
+
+        .modal-close:active {
+            transform: translateY(2px) rotate(90deg) scale(0.9);
+            box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border: 2px solid rgba(0, 0, 0, 0.3);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            font-size: 9px;
+            color: white;
+            animation: badgePop 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+
+        @keyframes badgePop {
+            from { 
+                opacity: 0; 
+                transform: scale(0) rotate(-180deg); 
+            }
+            to { 
+                opacity: 1; 
+                transform: scale(1) rotate(0deg); 
+            }
+        }
+
+        .badge-cat { background: #e67e22; animation-delay: 0.1s; }
+        .badge-version { background: #3498db; animation-delay: 0.2s; }
+        .badge-mc { background: #9b59b6; animation-delay: 0.3s; }
+        .badge-downloads { background: #5e9a3a; animation-delay: 0.4s; }
+
+        /* Галерея зображень */
+        .gallery-wrapper {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-image-wrapper {
+            position: relative;
+            aspect-ratio: 16/9;
+            overflow: hidden;
+            border: 4px solid #2b2522;
+        }
+
+        .modal-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.3s;
+        }
+
+        .block-corner {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #2b2522;
+            z-index: 10;
+        }
+
+        .corner-tl { top: -4px; left: -4px; }
+        .corner-tr { top: -4px; right: -4px; }
+        .corner-bl { bottom: -4px; left: -4px; }
+        .corner-br { bottom: -4px; right: -4px; }
+
+        .gallery-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            opacity: 0;
+            z-index: 15;
+        }
+
+        .modal-image-wrapper:hover .gallery-nav {
+            opacity: 1;
+        }
+
+        .gallery-nav:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .gallery-prev { left: 0.5rem; }
+        .gallery-next { right: 0.5rem; }
+
+        .gallery-indicators {
+            position: absolute;
+            bottom: 0.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.5rem;
+            z-index: 15;
+        }
+
+        .gallery-indicator {
+            width: 8px;
+            height: 8px;
+            background: transparent;
+            border: 2px solid white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .gallery-indicator.active {
+            background: white;
+            transform: scale(1.25);
+        }
+
+        .gallery-counter {
+            position: absolute;
+            top: 0.5rem;
+            left: 0.5rem;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            font-size: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            z-index: 15;
+        }
+
+        .description-box {
+            background: #665544;
+            border: 4px solid #2b2522;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            animation: slideInLeft 0.5s ease-out;
+        }
+
+        .description-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .description-title {
+            font-size: 12px;
+            margin-bottom: 0.75rem;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .description-text {
+            font-size: 10px;
+            color: #d4c4b0;
+            line-height: 1.6;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-card {
+            background: #665544;
+            border: 4px solid #2b2522;
+            padding: 1rem;
+            position: relative;
+            transition: transform 0.2s;
+            animation: cardSlideUp 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+
+        @keyframes cardSlideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .info-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+        }
+
+        .info-card:nth-child(1) { animation-delay: 0.1s; }
+        .info-card:nth-child(2) { animation-delay: 0.2s; }
+        .info-card:nth-child(3) { animation-delay: 0.3s; }
+
+        .info-card-tech::before { background: #3498db; }
+        .info-card-mc::before { background: #9b59b6; }
+        .info-card-downloads::before { background: #5e9a3a; }
+
+        .info-card-title {
+            font-size: 9px;
+            color: #d4c4b0;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-card-value {
+            font-size: 12px;
+            text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 1rem;
+            border: none;
+            border-top: 2px solid rgba(255, 255, 255, 0.3);
+            border-left: 2px solid rgba(255, 255, 255, 0.3);
+            border-right: 2px solid rgba(0, 0, 0, 0.4);
+            border-bottom: 4px solid rgba(0, 0, 0, 0.6);
+            box-shadow: 0 4px 0 0 rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            font-size: 10px;
+            font-family: 'Press Start 2P', cursive;
+            text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+            transition: all 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            flex: 1;
+            background: #5e9a3a;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #6eb044;
+            transform: scale(1.02);
+        }
+
+        .btn-primary:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-primary .download-icon {
+            animation: downloadBounce 1s ease-in-out infinite;
+        }
+
+        @keyframes downloadBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        .btn-secondary {
+            background: #7f8c8d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #95a5a6;
+            transform: scale(1.02);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.3);
+        }
+
+        /* Футер */
+        footer {
+            background: #8B7355;
+            border-top: 8px solid #2b2522;
+            padding: 1.5rem 0;
+            text-align: center;
+            margin-top: 3rem;
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .footer-content {
+            display: inline-block;
+            background: #665544;
+            border: 4px solid #2b2522;
+            padding: 0.75rem 1.5rem;
+            box-shadow: 4px 4px 0 0 rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+        }
+
+        .footer-content:hover {
+            transform: scale(1.05);
+        }
+
+        .footer-text {
+            font-size: 10px;
+            color: #d4c4b0;
+        }
+
+        @media (max-width: 768px) {
+            .maps-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 12px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Партікли снігу -->
+    <div id="particles"></div>
+
+    <!-- Світлові промені -->
+    <div id="lightBeams"></div>
+
+    <!-- Фоновий патерн -->
+    <div class="bg-pattern"></div>
+
+    <!-- Confetti -->
+    <div id="confetti"></div>
+
+    <!-- Хедер -->
+    <header>
+        <div class="header-gradient"></div>
+        <div class="container">
+            <div class="header-content">
+                <div class="header-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                </div>
+                <div>
+                    <h1>
+                        <span style="animation-delay: 0.3s">M</span><span style="animation-delay: 0.35s">i</span><span style="animation-delay: 0.4s">n</span><span style="animation-delay: 0.45s">e</span><span style="animation-delay: 0.5s">c</span><span style="animation-delay: 0.55s">r</span><span style="animation-delay: 0.6s">a</span><span style="animation-delay: 0.65s">f</span><span style="animation-delay: 0.7s">t</span> <span style="animation-delay: 0.75s">К</span><span style="animation-delay: 0.8s">а</span><span style="animation-delay: 0.85s">р</span><span style="animation-delay: 0.9s">т</span><span style="animation-delay: 0.95s">и</span>
+                    </h1>
+                    <p class="subtitle">Колекція найкращих карт для Minecraft</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основний контент -->
+    <main class="container">
+        <!-- Інфо панель -->
+        <div class="info-panel">
+            <p class="info-text">Знайдено карт: <span style="color: white;">4</span></p>
+            <p class="info-text">💡 Щоб додати свою карту: відредагуйте дані в JavaScript</p>
+        </div>
+
+        <!-- Сітка карт -->
+        <div class="maps-grid" id="mapsGrid"></div>
+    </main>
+
+    <!-- Футер -->
+    <footer>
+        <div class="footer-content">
+            <p class="footer-text">© 2025 Minecraft Карти • Created with 🗺️</p>
+        </div>
+    </footer>
+
+    <!-- Модальне вікно -->
+    <div id="modal" class="modal" onclick="if(event.target === this) closeModal()">
+        <div class="modal-wrapper">
+            <div class="modal-shadow"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div style="flex: 1;">
+                        <h2 id="modalTitle" style="font-size: 12px; text-shadow: 2px 2px 0 rgba(0,0,0,0.5); margin-bottom: 0.5rem;"></h2>
+                        <p id="modalSubtitle" class="subtitle"></p>
+                    </div>
+                    <button class="modal-close" onclick="closeModal()">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="badges" id="modalBadges"></div>
+                    
+                    <!-- Галерея зображень -->
+                    <div class="gallery-wrapper">
+                        <div class="modal-image-wrapper">
+                            <div class="block-corner corner-tl"></div>
+                            <div class="block-corner corner-tr"></div>
+                            <div class="block-corner corner-bl"></div>
+                            <div class="block-corner corner-br"></div>
+                            
+                            <img id="modalImage" class="modal-image" alt="">
+                            
+                            <div class="gallery-counter" id="galleryCounter"></div>
+                            
+                            <button class="gallery-nav gallery-prev" onclick="prevImage()">◀</button>
+                            <button class="gallery-nav gallery-next" onclick="nextImage()">▶</button>
+                            
+                            <div class="gallery-indicators" id="galleryIndicators"></div>
+                        </div>
+                    </div>
+
+                    <div class="description-box">
+                        <h3 class="description-title">📜 Опис</h3>
+                        <p id="modalDescription" class="description-text"></p>
+                    </div>
+                    
+                    <div class="info-grid">
+                        <div class="info-card info-card-tech">
+                            <p class="info-card-title">📦 Версія карти</p>
+                            <p id="modalVersion" class="info-card-value"></p>
+                        </div>
+                        <div class="info-card info-card-mc">
+                            <p class="info-card-title">📅 Сумісність</p>
+                            <p id="modalMcVersion" class="info-card-value"></p>
+                        </div>
+                        <div class="info-card info-card-downloads">
+                            <p class="info-card-title">⬇️ Завантажень</p>
+                            <p id="modalDownloads" class="info-card-value"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="btn-primary" onclick="downloadMap()">
+                            <span class="download-icon">⬇️</span>
+                            <span>Завантажити карту</span>
+                        </button>
+                        <button class="btn-secondary" onclick="closeModal()">Закрити</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Дані карт
+        const maps = [
+            {
+                id: 1,
+                name: '[Назва карти]',
+                shortDescription: '[Короткий опис карти]',
+                fullDescription: '[Повний опис карти - тут ви можете детально розповісти про всі можливості, особливості та пригоди які чекають на гравців. Опишіть що особливого є на карті, які завдання, квести чи челенджі можна пройти.]',
+                images: [
+                    'https://images.unsplash.com/photo-1727020415673-82ab082add23?w=800',
+                    'https://images.unsplash.com/photo-1658834291352-d2d8e554c0dd?w=800',
+                    'https://images.unsplash.com/photo-1678999917361-767725e18c2c?w=800'
+                ],
+                downloadUrl: '/maps/map1.zip',
+                version: '1.0.0',
+                minecraftVersion: '1.20.1',
+                downloads: 0,
+                category: 'Пригоди'
+            },
+            {
+                id: 2,
+                name: '[Назва карти]',
+                shortDescription: '[Короткий опис карти]',
+                fullDescription: '[Повний опис карти - тут ви можете детально розповісти про всі можливості, особливості та пригоди які чекають на гравців. Опишіть що особливого є на карті, які завдання, квести чи челенджі можна пройти.]',
+                images: [
+                    'https://images.unsplash.com/photo-1727020415673-82ab082add23?w=800',
+                    'https://images.unsplash.com/photo-1658834291352-d2d8e554c0dd?w=800',
+                    'https://images.unsplash.com/photo-1678999917361-767725e18c2c?w=800'
+                ],
+                downloadUrl: '/maps/map2.zip',
+                version: '1.0.0',
+                minecraftVersion: '1.20.1',
+                downloads: 0,
+                category: 'PvP'
+            },
+            {
+                id: 3,
+                name: '[Назва карти]',
+                shortDescription: '[Короткий опис карти]',
+                fullDescription: '[Повний опис карти - тут ви можете детально розповісти про всі можливості, особливості та пригоди які чекають на гравців. Опишіть що особливого є на карті, які завдання, квести чи челенджі можна пройти.]',
+                images: [
+                    'https://images.unsplash.com/photo-1727020415673-82ab082add23?w=800',
+                    'https://images.unsplash.com/photo-1658834291352-d2d8e554c0dd?w=800',
+                    'https://images.unsplash.com/photo-1678999917361-767725e18c2c?w=800'
+                ],
+                downloadUrl: '/maps/map3.zip',
+                version: '1.0.0',
+                minecraftVersion: '1.20.1',
+                downloads: 0,
+                category: 'Паркур'
+            },
+            {
+                id: 4,
+                name: '[Назва карти]',
+                shortDescription: '[Короткий опис карти]',
+                fullDescription: '[Повний опис карти - тут ви можете детально розповісти про всі можливості, особливості та пригоди які чекають на гравців. Опишіть що особливого є на карті, які завдання, квести чи челенджі можна пройти.]',
+                images: [
+                    'https://images.unsplash.com/photo-1727020415673-82ab082add23?w=800',
+                    'https://images.unsplash.com/photo-1658834291352-d2d8e554c0dd?w=800',
+                    'https://images.unsplash.com/photo-1678999917361-767725e18c2c?w=800'
+                ],
+                downloadUrl: '/maps/map4.zip',
+                version: '1.0.0',
+                minecraftVersion: '1.20.1',
+                downloads: 0,
+                category: 'Виживання'
+            }
+        ];
+
+        let selectedMap = null;
+        let currentImageIndex = 0;
+
+        // Створення партіклів снігу
+        function createSnowParticles() {
+            const container = document.getElementById('particles');
+            const sizes = [3, 4, 5, 6];
+            
+            setInterval(() => {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                const size = sizes[Math.floor(Math.random() * sizes.length)];
+                const x = Math.random() * window.innerWidth;
+                const duration = Math.random() * 4 + 3;
+                const wind = (Math.random() - 0.5) * 100;
+                
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = x + 'px';
+                particle.style.top = '-20px';
+                particle.style.setProperty('--wind', wind + 'px');
+                particle.style.animationDuration = duration + 's';
+                
+                container.appendChild(particle);
+                
+                setTimeout(() => {
+                    particle.remove();
+                }, duration * 1000);
+            }, 150);
+        }
+
+        // Створення світлових променів
+        function createLightBeams() {
+            const container = document.getElementById('lightBeams');
+            for (let i = 0; i < 5; i++) {
+                const beam = document.createElement('div');
+                beam.className = 'light-beam';
+                beam.style.left = (20 + i * 20) + '%';
+                beam.style.animationDuration = (3 + i) + 's';
+                beam.style.animationDelay = (i * 0.5) + 's';
+                container.appendChild(beam);
+            }
+        }
+
+        // Створення confetti
+        function createConfetti() {
+            const container = document.getElementById('confetti');
+            container.innerHTML = '';
+            const colors = ['#5e9a3a', '#f39c12', '#e74c3c', '#3498db', '#9b59b6'];
+            
+            for (let i = 0; i < 30; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                
+                const size = 4 + Math.random() * 6;
+                const x = Math.random() * 100;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const drift = (Math.random() - 0.5) * 200;
+                const rotation = Math.random() * 720;
+                
+                piece.style.width = size + 'px';
+                piece.style.height = size + 'px';
+                piece.style.left = x + '%';
+                piece.style.backgroundColor = color;
+                piece.style.boxShadow = `0 0 4px 2px ${color}80`;
+                piece.style.setProperty('--drift', drift + 'px');
+                piece.style.setProperty('--rotation', rotation + 'deg');
+                
+                container.appendChild(piece);
+                
+                setTimeout(() => {
+                    piece.remove();
+                }, 3000);
+            }
+        }
+
+        // Рендер карток карт
+        function renderMaps() {
+            const grid = document.getElementById('mapsGrid');
+            grid.innerHTML = maps.map((map, index) => `
+                <div class="map-card" style="animation-delay: ${0.6 + index * 0.1}s" onclick="openModal(${map.id})">
+                    <div class="map-card-shadow"></div>
+                    <div class="map-card-content">
+                        <div class="card-gradient"></div>
+                        <div class="map-image-wrapper">
+                            <img src="${map.images[0]}" alt="${map.name}" class="map-image">
+                            <div class="map-category">
+                                <span class="map-category-icon">📍</span> ${map.category}
+                            </div>
+                            ${map.images.length > 1 ? `
+                                <div class="photo-count">📷 ${map.images.length} фото</div>
+                            ` : ''}
+                            <div class="floating-particles">
+                                ${[...Array(8)].map((_, i) => `
+                                    <div class="float-particle" style="
+                                        left: ${Math.random() * 100}%;
+                                        top: ${Math.random() * 100}%;
+                                        --drift: ${(Math.random() - 0.5) * 20}px;
+                                        animation-delay: ${Math.random() * 2}s;
+                                    "></div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div class="map-info">
+                            <h3 class="map-title">${map.name}</h3>
+                            <p class="map-description">${map.shortDescription}</p>
+                            <div class="map-meta">
+                                <span>⭐ ${map.version}</span>
+                                <span>•</span>
+                                <span>MC ${map.minecraftVersion}</span>
+                                <span>•</span>
+                                <span>⬇️ ${map.downloads.toLocaleString('uk-UA')}</span>
+                            </div>
+                            <button class="map-button" onclick="event.stopPropagation(); openModal(${map.id})">
+                                Детальніше
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Відкрити модальне вікно
+        function openModal(mapId) {
+            selectedMap = maps.find(m => m.id === mapId);
+            if (!selectedMap) return;
+
+            currentImageIndex = 0;
+
+            document.getElementById('modalTitle').textContent = selectedMap.name;
+            document.getElementById('modalSubtitle').textContent = selectedMap.shortDescription;
+            document.getElementById('modalDescription').textContent = selectedMap.fullDescription;
+            document.getElementById('modalVersion').textContent = selectedMap.version;
+            document.getElementById('modalMcVersion').textContent = 'MC ' + selectedMap.minecraftVersion;
+            document.getElementById('modalDownloads').textContent = selectedMap.downloads.toLocaleString('uk-UA');
+
+            updateGallery();
+
+            document.getElementById('modalBadges').innerHTML = `
+                <span class="badge badge-cat">⭐ ${selectedMap.category}</span>
+                <span class="badge badge-version">📦 v${selectedMap.version}</span>
+                <span class="badge badge-mc">⚡ MC ${selectedMap.minecraftVersion}</span>
+                <span class="badge badge-downloads">⬇️ ${selectedMap.downloads.toLocaleString('uk-UA')}</span>
+            `;
+
+            document.getElementById('modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Оновити галерею
+        function updateGallery() {
+            if (!selectedMap) return;
+
+            document.getElementById('modalImage').src = selectedMap.images[currentImageIndex];
+            
+            if (selectedMap.images.length > 1) {
+                document.getElementById('galleryCounter').textContent = 
+                    `${currentImageIndex + 1} / ${selectedMap.images.length}`;
+                
+                const indicators = selectedMap.images.map((_, index) => 
+                    `<div class="gallery-indicator ${index === currentImageIndex ? 'active' : ''}" 
+                          onclick="setImage(${index})"></div>`
+                ).join('');
+                
+                document.getElementById('galleryIndicators').innerHTML = indicators;
+                
+                document.querySelector('.gallery-prev').style.display = 'block';
+                document.querySelector('.gallery-next').style.display = 'block';
+            } else {
+                document.getElementById('galleryCounter').textContent = '';
+                document.getElementById('galleryIndicators').innerHTML = '';
+                document.querySelector('.gallery-prev').style.display = 'none';
+                document.querySelector('.gallery-next').style.display = 'none';
+            }
+        }
+
+        // Наступне зображення
+        function nextImage() {
+            if (!selectedMap) return;
+            currentImageIndex = (currentImageIndex + 1) % selectedMap.images.length;
+            updateGallery();
+        }
+
+        // Попереднє зображення
+        function prevImage() {
+            if (!selectedMap) return;
+            currentImageIndex = (currentImageIndex - 1 + selectedMap.images.length) % selectedMap.images.length;
+            updateGallery();
+        }
+
+        // Встановити конкретне зображення
+        function setImage(index) {
+            currentImageIndex = index;
+            updateGallery();
+        }
+
+        // Закрити модальне вікно
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+            selectedMap = null;
+            currentImageIndex = 0;
+        }
+
+        // Завантажити карту
+        function downloadMap() {
+            if (!selectedMap) return;
+            
+            createConfetti();
+            
+            const link = document.createElement('a');
+            link.href = selectedMap.downloadUrl;
+            link.download = selectedMap.name.replace(/\[|\]/g, '').trim() + '_v' + selectedMap.version + '.zip';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Підтримка клавіатури для галереї
+        document.addEventListener('keydown', (e) => {
+            if (!selectedMap) return;
+            if (e.key === 'ArrowLeft') prevImage();
+            if (e.key === 'ArrowRight') nextImage();
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Ініціалізація
+        createSnowParticles();
+        createLightBeams();
+        renderMaps();
+    </script>
+</body>
+</html>
